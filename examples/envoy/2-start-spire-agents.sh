@@ -12,9 +12,9 @@ nn=$(tput sgr0)
 # https://github.com/spiffe/spire/blob/master/doc/spire_server.md#plugin-types)
 echo "${bb}Bootstrapping trust between SPIRE agents and SPIRE server...${nn}"
 docker-compose exec -T spire-server bin/spire-server bundle show |
-	docker-compose exec -T web sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null
+	docker-compose exec web sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null
 docker-compose exec -T spire-server bin/spire-server bundle show |
-	docker-compose exec -T echo sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null
+	docker-compose exec echo sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null
 
 
 echo "web bundle:"
