@@ -11,15 +11,32 @@ nn=$(tput sgr0)
 # trust bundle (see UpstreamCA under
 # https://github.com/spiffe/spire/blob/master/doc/spire_server.md#plugin-types)
 echo "${bb}Bootstrapping trust between SPIRE agents and SPIRE server...${nn}"
-docker-compose exec -T spire-server bin/spire-server bundle show |
-	docker-compose exec web sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
-docker-compose exec -T spire-server bin/spire-server bundle show |
-	docker-compose exec echo sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
 
-
+echo "trying it every way..."
+echo "without tty:"
+docker-compose exec -T spire-server bin/spire-server bundle show |
+	docker-compose exec -T web sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
 echo "web bundle:"
 docker-compose exec -T web ls -la conf/agent/bootstrap.crt
+	
+echo "with tty:"
+docker-compose exec -T spire-server bin/spire-server bundle show |
+	docker-compose exec web sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
+echo "web bundle:"
+docker-compose exec -T web ls -la conf/agent/bootstrap.crt
+	
 
+
+echo "echoserver bundle:"	
+echo "without tty:"
+docker-compose exec -T spire-server bin/spire-server bundle show |
+	docker-compose exec -T echo sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
+echo "echo bundle:"
+docker-compose exec -T echo ls -la conf/agent/bootstrap.crt
+	
+echo "with tty:"
+docker-compose exec -T spire-server bin/spire-server bundle show |
+	docker-compose exec echo sh -c "cat > conf/agent/bootstrap.crt" 2>/dev/null || echo "ignoring pipe error"
 echo "echo bundle:"
 docker-compose exec -T echo ls -la conf/agent/bootstrap.crt
 
